@@ -48,7 +48,7 @@ void setup()
   digitalWrite(LED, LOW);
 
   Serial.begin(9600);
-  while (Serial == false); //This line requires USB to be hooked up. If you're going to do battery powered range testing, comment it out.
+//  while (Serial == false); //This line requires USB to be hooked up. If you're going to do battery powered range testing, comment it out.
 
   Serial.println("RFM Test");
 
@@ -74,10 +74,10 @@ void loop()
       digitalWrite(LED, HIGH); //Turn on status LED
       timeSinceLastPacket = millis(); //Timestamp this packet
 
-      Serial.print("Got message: ");
+//      Serial.print("Got message: ");
       Serial.print((char*)buf);
-      Serial.print(" RSSI: ");
-      Serial.print(rf95.lastRssi(), DEC);
+//      Serial.print(" RSSI: ");
+//      Serial.print(rf95.lastRssi(), DEC);
       Serial.println();
     }
   }
