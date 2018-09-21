@@ -48,7 +48,7 @@ void setup()
   digitalWrite(LED, LOW);
 
   Serial.begin(9600);
-//  while (Serial == false); //This line requires USB to be hooked up. If you're going to do battery powered range testing, comment it out.
+  while (Serial == false); //This line requires USB to be hooked up. If you're going to do battery powered range testing, comment it out.
 
   Serial.println("RFM Test");
 
@@ -58,6 +58,8 @@ void setup()
     while (1);
   }
 
+  //< Bw = 31.25 kHz, Cr = 4/8, Sf = 512chips/symbol, CRC on. Slow+long range
+  rf95.setModemConfig(RH_RF95::Bw31_25Cr48Sf512);
   rf95.setFrequency(909.2);
   rf95.setTxPower(23, false);
 }

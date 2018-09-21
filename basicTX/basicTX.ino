@@ -20,7 +20,7 @@ void setup()
   digitalWrite(LED, LOW);
 
   Serial.begin(115200);
-//  while (Serial == false);
+  while (Serial == false);
   Serial.println("RFM Test");
 
   if (rf95.init() == false)
@@ -38,6 +38,8 @@ void setup()
 //  }
 //  Serial.println("GPS module found!");
 
+  //< Bw = 31.25 kHz, Cr = 4/8, Sf = 512chips/symbol, CRC on. Slow+long range
+  rf95.setModemConfig(RH_RF95::Bw31_25Cr48Sf512);
   rf95.setFrequency(909.2);
   rf95.setTxPower(23, false);
 }
