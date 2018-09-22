@@ -85,7 +85,7 @@ void addGPSInfo(char* info) {
   double gpsSpeed = 0;
   char speedString[7];
   if (gps.speed.isValid()) {
-    gpsSpeed = gps.speed.mph();
+     gpsSpeed = gps.speed.mph();
   }
   dtostrf(gpsSpeed, 3, 2, speedString);
 
