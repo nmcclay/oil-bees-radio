@@ -110,7 +110,7 @@ uint8_t I2CGPS::read(void)
 }
 
 //Enables serial printing of local error messages
-void I2CGPS::enableDebugging(Stream &debugPort = Serial)
+void I2CGPS::enableDebugging(Stream &debugPort)
 {
   _debugSerial = &debugPort; //Grab which port the user wants us to use for debugging
 
@@ -165,7 +165,7 @@ boolean I2CGPS::sendMTKpacket(String command)
     }
     _i2cPort->endTransmission();
   }
-  
+
   return(true);
 }
 
@@ -254,5 +254,3 @@ String I2CGPS::createPGCMDpacket(uint16_t packetType, String dataField)
 
   return (configSentence);
 }
-
-

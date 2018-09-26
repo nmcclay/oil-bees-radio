@@ -37,7 +37,7 @@ const byte RFM95_INT = 26; // ESP32
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
 //const byte LED = 13; // Pro Micro
-const byte LED = 23; // ESP32
+const byte LED = 26; // ESP32
 
 int packetCounter = 0; //Counts the number of packets sent
 long timeSinceLastPacket = 0; //Tracks the time stamp of last packet received

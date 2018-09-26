@@ -5,22 +5,31 @@ I2CGPS myI2CGPS; //Hook object to the library
 #include <TinyGPS++.h> //From: https://github.com/mikalhart/TinyGPSPlus
 TinyGPSPlus gps; //Declare gps object
 
-RH_RF95 rf95(A5, 7);
-const byte LED = 13; // Pro Micro
-const byte SWITCH = A0;
+// ESP32
+//const byte RFM95_CS = 16; 
+//const byte RFM95_INT = 26;
+//const byte LED = 23;
+//const byte SWITCHES[5] = {A0, A3, A4, A5, A6};
 
+// Pro Micro
+const byte RFM95_CS = A5;
+const byte RFM95_INT = 7;
+const byte LED = 13; 
+const byte SWITCHES[5] = {A0, A1, A2, A3, A4};
+
+RH_RF95 rf95(RFM95_CS, RFM95_INT);
 int packetCounter = 0; //Counts the number of packets sent
-
-long timeSinceLastPacket = 0; //Tracks the time stamp of last packet received
 
 void setup() 
 {
   pinMode(LED, OUTPUT);
-  pinMode(SWITCH, INPUT);
   digitalWrite(LED, LOW);
+  for (int i = 0; i <= sizeof(SWITCHES);i++) {
+     pinMode(SWITCHES[i], INPUT);
+  };
 
   Serial.begin(115200);
-  while (Serial == false);
+//  while (Serial == false);
   Serial.println("RFM Test");
 
   if (rf95.init() == false)
@@ -28,7 +37,7 @@ void setup()
     Serial.println("Radio Init Failed - Freezing");
     while (1);
   }
-    Serial.println("LoRa module found!");
+  Serial.println("LoRa module found!");
 
   Serial.println("GTOP Test");
   if (myI2CGPS.begin() == false)
@@ -49,18 +58,10 @@ void loop()
 {
   digitalWrite(LED, LOW);
 
-  char toSend[50];
-  // sprintf(toSend, "N=%d", packetCounter++);
-  addGPSInfo(toSend); // 46 characters
-  
-  int buttonState = digitalRead(SWITCH);
-  char *buttonText;
-  if (buttonState == HIGH) {
-    buttonText = " X=1";
-  } else {
-    buttonText = " X=0";
-  }
-  strcat(toSend, buttonText);
+  char toSend[48];
+  sprintf(toSend, "N=%d", packetCounter++);
+  addGPSInfo(toSend); // 40 characters
+  addButtonInfo(toSend); // 7 characters
 
   rf95.send((const uint8_t*)toSend, sizeof(toSend));
   rf95.waitPacketSent();
@@ -68,6 +69,22 @@ void loop()
   
   digitalWrite(LED, HIGH); //Turn off status LED
   delay(500);
+}
+
+void addButtonInfo(char* info) {
+  int buttonStates[5];
+  for (int i = 0; i <= sizeof(SWITCHES);i++) {
+    int buttonState = digitalRead(SWITCHES[i]);
+    if (buttonState == HIGH) {
+      buttonStates[i] = 1;
+    } else {
+      buttonStates[i] = 0;
+    }
+  };
+
+  char buttonText[7];
+  sprintf(buttonText, " %d%d%d%d%d", buttonStates[0], buttonStates[1], buttonStates[2], buttonStates[3], buttonStates[4]);
+  strcat(info, buttonText);
 }
 
 //appends GPS info to response
@@ -99,5 +116,5 @@ void addGPSInfo(char* info) {
   }
   dtostrf(gpsLatitude, 3, 6, latitudeString);
   dtostrf(gpsLongitude, 3, 6, longitudeString);
-  sprintf(info, "T=%s S=%s G=%s:%s", timeString, speedString, latitudeString, longitudeString);
+  sprintf(info, "%s %s %s:%s", timeString, speedString, latitudeString, longitudeString);
 }
